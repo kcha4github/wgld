@@ -2,6 +2,12 @@
 
 https://wgld.org/ での3Dについての学習内容を記録していく。
 
+
+# 進捗
+
+- 3D描画の基礎知識(https://wgld.org/d/webgl/w003.html)まで。(2020/11/24)
+
+
 # 以下テンプレート
 
 https://cpp-learning.com/readme/ ここからいただいたREADME.mdのテンプレート。
