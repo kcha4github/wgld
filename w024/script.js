@@ -1,4 +1,4 @@
-// WebGL 平行光源＋環境光によるライティング
+// WebGL フォンシェーディング
 
 onload = function(){
     // canvasエレメントを取得
@@ -30,11 +30,11 @@ onload = function(){
 
     // トーラスの頂点データを生成
     var torusData = torus(64, 64, 1.5, 3.0);
-    var position = torusData[0];
-    var normal = torusData[1];
-    var color = torusData[2];
+    var position = torusData.p;
+    var normal = torusData.n;
+    var color = torusData.c;
     // 頂点のインデックスを格納する配列
-    var index = torusData[3];
+    var index = torusData.i;
 
     // VBOの生成
     var pos_vbo = create_vbo(position);
@@ -69,21 +69,21 @@ onload = function(){
     var mvpMatrix = m.identity(m.create());
     var invMatrix = m.identity(m.create());
 
-    // ビュー座標変換行列
-    m.lookAt([0.0, 0.0, 20.0], [0, 0, 0], [0, 1, 0], vMatrix);
-    // プロジェクション座標変換行列
-    m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
-    m.multiply(pMatrix, vMatrix, tmpMatrix);
-
-
     // 平行光源の向き
     var lightDirection = [-0.5, 1.0, 0.5];
+
+    // 環境光の色
+    var ambientColor = [0.1, 0.1, 0.1, 1.0];
 
     // 視点ベクトル
     var eyeDirection = [0.0, 0.0, 20.0];
 
-    // 環境光の色
-    var ambientColor = [0.1, 0.1, 0.1, 1.0];
+    // ビュー座標変換行列
+    m.lookAt(eyeDirection, [0, 0, 0], [0, 1, 0], vMatrix);
+    // プロジェクション座標変換行列
+    m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
+    m.multiply(pMatrix, vMatrix, tmpMatrix);
+
 
     // カウンタの宣言
     var count = 0;
@@ -253,16 +253,17 @@ onload = function(){
     }
 
     // トーラスモデルデータ生成関数（返却値に法線ベクトルを含むよう変更）
-    // @return: [pos, nor, col, idx]
-    //  pos: 座標配列 [x0,y0,z0,x1,...]
-    //  nor: 法線ベクトル配列 [nx0,ny0,nz0,nx1,...]
-    //  col: 色配列 [r0,g0,b0,a0,r0,...]
-    //  idx: 座標インデックス配列
+    // @return: {p, n, c, i}
+    //  p: 座標配列 [x0,y0,z0,x1,...]
+    //  n: 法線ベクトル配列 [nx0,ny0,nz0,nx1,...]
+    //  c: 色配列 [r0,g0,b0,a0,r0,...]
+    //  i: 座標インデックス配列
     // @param row: 断面円の頂点数
     // @param column: トーラス円の分割数（頂点数は分割数＋１となる）
     // @param irad: 断面円の半径
     // @param orad: 原点からパイプ中心への距離（トーラス全体の半径）
-    function torus(row, column, irad, orad){
+    // @param color: 色(RGBA)
+    function torus(row, column, irad, orad, color){
         var pos = new Array();
         var nor = new Array();
         var col = new Array();
@@ -294,11 +295,18 @@ onload = function(){
                 // トーラスのxyz位置の法線のx,z成分はrrをcosとsinに分解する
                 var rx = rr * Math.cos(tr);
                 var rz = rr * Math.sin(tr);
+                // カラー指定の有無
+                if(color){
+                    // カラー指定
+                    var tc = color;
+                }else{
+                    // hsvカラーを取得
+                    tc = hsva(360 / column * cIdx, 1, 1, 1);
+                }
                 // 座標を配列に格納
                 pos.push(tx, ty, tz);
                 // 法線ベクトルを配列に格納
                 nor.push(rx, ry, rz);
-                // hsvカラーを取得
                 var tc = hsva(360 / column * cIdx, 1, 1, 1);
                 // 色情報を配列に格納
                 col.push(tc[0], tc[1], tc[2], tc[3]);
@@ -320,7 +328,7 @@ onload = function(){
                 idx.push(r + column + 1, r + column + 2, r + 1);
             }
         }
-        return [pos, nor, col, idx];
+        return {p:pos, n:nor, c:col, i:idx};
     }
 
     // HSVカラー取得用関数
