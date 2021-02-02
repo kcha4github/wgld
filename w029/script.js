@@ -106,10 +106,10 @@ onload = function(){
 
 
     // テクスチャ用変数の宣言
-    var texture = null;
+    var texture0 = null, texture1 = null;
     // テクスチャを作成
-    create_texture('texture.png');
-    gl.activeTexture(gl.TEXTURE0);
+    create_texture('texture0.png', 0);
+    create_texture('texture1.png', 1);
 
     // カウンタの宣言
     var count = 0;
@@ -138,12 +138,13 @@ onload = function(){
 
         // モデル座標変換行列の生成
         m.identity(mMatrix);
-        m.translate(mMatrix, [0.25, 0.25, -0.25], mMatrix);
+        m.translate(mMatrix, [1.0, 0.25, -0.25], mMatrix);
         m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
         m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 
         // テクスチャのバインド
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.bindTexture(gl.TEXTURE_2D, texture0);
+        gl.activeTexture(gl.TEXTURE0);
 
         // ブレンディングを無効にする
         gl.disable(gl.BLEND);
@@ -155,10 +156,33 @@ onload = function(){
         gl.uniform1i(uniLocation[3], true);
         gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
+        // テクスチャのバインドを解除
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
         // モデル座標変換行列の生成
         m.identity(mMatrix);
-        m.translate(mMatrix, [-0.25, -0.25, 0.25], mMatrix);
+        m.translate(mMatrix, [-1.0, 0.25, -0.25], mMatrix);
+        m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+        m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+
+        // テクスチャのバインド
+        gl.bindTexture(gl.TEXTURE_2D, texture1);
+        gl.activeTexture(gl.TEXTURE1);
+
+        // ブレンディングを無効にする
+        gl.disable(gl.BLEND);
+
+        // uniform変数の登録と描画
+        gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
+        gl.uniform1f(uniLocation[1], 1.0);
+        gl.uniform1i(uniLocation[2], 1);
+        gl.uniform1i(uniLocation[3], true);
+        gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+
+
+        // モデル座標変換行列の生成
+        m.identity(mMatrix);
+        m.translate(mMatrix, [0.0, -0.25, 0.25], mMatrix);
         m.rotate(mMatrix, rad, [0, 0, 1], mMatrix);
         m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 
@@ -302,7 +326,7 @@ onload = function(){
 
 
     // テクスチャを生成する関数
-    function create_texture(source /*, number*/){
+    function create_texture(source, number){
         // イメージオブジェクトの作成
         var img = new Image();
 
@@ -327,10 +351,9 @@ onload = function(){
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
             // テクスチャを変数に代入
-            texture = tex;
+            //texture = tex;
 
             // 生成したテクスチャを変数に代入
-            /*
             switch(number){
                 case 0:
                     texture0 = tex;
@@ -341,7 +364,6 @@ onload = function(){
                 default:
                     break;
             }
-            */
 
             // テクスチャのバインドを無効化
             gl.bindTexture(gl.TEXTURE_2D, null);
