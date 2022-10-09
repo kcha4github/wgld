@@ -4,6 +4,7 @@ https://wgld.org/ での3Dについての学習内容を記録していく。
 
 
 # 進捗
+- 「ステンシルバッファ」まで。(2022/10/10)
 - 「ポイントスプライト」まで。(2022/09/08)
 - 「点や線のレンダリング」まで。(2022/06/03)
 - 「クォータニオンとビルボード」まで。(2022/05/26)
@@ -83,55 +84,3 @@ gl.enable(gl.CULL_FACE);
 ### フラグメントシェーダ
 - varying修飾子：頂点シェーダからの橋渡し用変数
 - gl_FragColor：色情報を渡す先
-
-
-# 以下テンプレート
-
-https://cpp-learning.com/readme/ ここからいただいたREADME.mdのテンプレート。
-進み次第、文章を加えていく予定。
-
-# Requirement
-
-"hoge"を動かすのに必要なライブラリなどを列挙する
-
-* huga 3.5.2
-* hogehuga 1.0.2
-
-# Installation
-
-Requirementで列挙したライブラリなどのインストール方法を説明する
-
-```bash
-pip install huga_package
-```
-
-# Usage
-
-DEMOの実行方法など、"hoge"の基本的な使い方を説明する
-
-```bash
-git clone https://github.com/hoge/~
-cd examples
-python demo.py
-```
-
-# Note
-
-注意点などがあれば書く
-
-# Author
-
-作成情報を列挙する
-
-* 作成者
-* 所属
-* E-mail
-
-# License
-ライセンスを明示する
-
-"hoge" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
-
-社内向けなら社外秘であることを明示してる
-
-"hoge" is Confidential.
